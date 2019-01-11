@@ -9,6 +9,11 @@ verify_ssl = true
 django = "*"
 pytz = "*"
 django-taggit = "*"
+<<<<<<< HEAD:Pipfile
+=======
+mysqlclient = "*"
+mysql-python = "*"
+>>>>>>> develop:ch1~ch3/Pipfile
 
 [requires]
 python_version = "3.6"
