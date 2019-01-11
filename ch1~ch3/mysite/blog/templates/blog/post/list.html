@@ -54,7 +54,6 @@
 						Next
 					</a>
 				{% else %}
-					{{page_obj.next_page_number}}
 					<a href="{% url 'blog:post_list' page_idx=page_obj.next_page_number %}">
 						Next
 					</a>

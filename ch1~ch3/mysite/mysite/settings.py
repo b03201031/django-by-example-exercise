@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+from . import local_settings
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_yint11oz_q(6_2&4^$82y-a+qx#m%^rhf20*48bkc-=0#7*a('
+SECRET_KEY = '4_*4r@50ksrdfvag-l_88lh^fb-z)hjv@_#(r1^be5n(+ull!g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -30,6 +33,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# since example.com is added
+SITE_ID = 1
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,8 +43,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #customize apps
+    #sitemap
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+
+    #local app
     'blog',
+    'taggit',
+
+    #db
+    'django.contrib.mysql',
+    
+
+    
 ]
 
 MIDDLEWARE = [
@@ -78,8 +94,11 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': local_settings.MYSQL_DB_NAME,
+        'USER': local_settings.MYSQL_USER,
+        'PASSWORD': local_settings.MYSQL_PASSWORD,
+
     }
 }
 
@@ -121,3 +140,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = local_settings.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = local_settings.EMAIL_HOST_PASSWORD
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
