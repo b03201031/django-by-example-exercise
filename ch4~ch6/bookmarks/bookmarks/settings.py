@@ -145,3 +145,8 @@ EMAIL_HOST_PASSWORD = local_settings.EMAIL_HOST_PASSWORD
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = local_settings.EMAIL_HOST_USER
+
+
+#MEDIA
+MEDIA_URL = '/media/'
+MEFIA_ROOT = os.path.join(BASE_DIR, 'media')
