@@ -9,6 +9,7 @@ verify_ssl = true
 django = "*"
 psycopg2 = "*"
 pillow = "*"
+social-auth-app-django = "*"
 
 [requires]
 python_version = "3.6"
