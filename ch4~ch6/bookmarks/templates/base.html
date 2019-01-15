@@ -1,0 +1,73 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+    <script>
+    
+        let csrftoken = Cookies.get('csrftoken');
+
+        function csrfSafeMethod(method){
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            {% block domready %}
+            {% endblock %}
+        });
+    </script>
+
+</head>
+<body>
+    <div id="header">
+        <span class="logo">Bookmarks</span>
+        {% if request.user.is_authenticated %}
+            <li>You have logged in</li>
+            {% if section == 'dashboard' %}
+                <li><a href="{% url 'account:dashboard' %}"> dashboard</a></li>    
+            {% endif %}
+        {% else %}
+            <li>You haven't logged in</li>
+        {% endif %}
+        <span class="user">
+            {% if request.user.is_authenticated %}
+                Hello {{ request.user.first_name }}, {{ request.user.username }}, <a href="{% url 'account:logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'account:login' %}">Log-in</a>
+            {% endif %}
+        </span>
+    </div>
+
+    {% if messages %}
+        <div>
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="{{ message.tag }}">{{ message|safe }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
+
+    <div id="content">
+        {% block content %}
+            <ul>
+                <li></li>
+            </ul>
+        {% endblock %}
+    </div>
+
+</body>
+</html>

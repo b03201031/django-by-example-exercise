@@ -10,6 +10,7 @@ django = "*"
 psycopg2 = "*"
 pillow = "*"
 social-auth-app-django = "*"
+sorl-thumbnail = "*"
 
 [requires]
 python_version = "3.6"
