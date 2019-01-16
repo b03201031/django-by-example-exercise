@@ -43,7 +43,10 @@ urlpatterns = [
     path('edit/', views.edit, name='edit'),
 
     path('users/', views.user_list, name='user_list'),
+    # this should be in front of user detail because the order
+    path('user/follow/', views.user_follow, name='user_follow'),
     path('user/<username>/', views.user_detail, name='user_detail'),
+
     
 ]
 

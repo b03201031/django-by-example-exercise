@@ -10,4 +10,4 @@ def ajax_required(f):
         else:
             return f(request, *args, **kwargs)
 
-    return wraps
+    return wrapper

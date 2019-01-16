@@ -8,7 +8,8 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .common.decorators import ajax_required
+from actions.utils import create_action
+from common.decorators import ajax_required
 from .forms import ImageCreateForm
 from .models import Image
 
@@ -59,15 +60,14 @@ def image_like(request):
     image_id = request.POST.get('id')
     action = request.POST.get('action')
 
-    print(image_id)
-    print(action)
-
     if image_id and action:
         try:
            
             image = Image.objects.get(id=image_id)
             if action == 'like':
                 image.users_like.add(request.user)
+                create_action(request.user, 'like', image)
+                
             else:
                 print('called')
                 image.users_like.remove(request.user)
@@ -75,6 +75,8 @@ def image_like(request):
             DATA = {
                 'status': 'ok',
             }
+
+
 
             return JsonResponse(DATA)
 
@@ -108,6 +110,7 @@ def image_create(request):
             new_image = create_form.save(commit=False)
             new_image.user = request.user
             new_image.save()
+            create_action(request.user, 'bookmarked image', new_item)
             messages.success(request, 'Image successfully add')
 
             return redirect(new_image.get_absolute_url())

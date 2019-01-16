@@ -1,13 +1,37 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 
 # Create your models here.
 # blank for form
 # null for db i.e. set blank field to be bull 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete='CASCADE')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='user/%Y/%m/%d', blank=True)
 
     def __str__(self):
         return "Profile for user {}".format(self.user.username)
+
+
+class Contact(models.Model):
+    user_from = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='rel_from_set',
+                                                           on_delete=models.CASCADE)
+    user_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='rel_to_set',
+                                                         on_delete=models.CASCADE)
+    created = models.DateField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ('-created',)
+
+    def __str__(self):
+        return '{} follows {}'.format(self.user_from, self.user_to)
+
+
+#monkey patch
+# 使用中间表格作为多对多关系的中间表时，一些管理器的内置方法如add()，create()，remove()等无法使用，必须编写直接操作中间表的代码。
+User.add_to_class('following',
+                   models.ManyToManyField('self', through=Contact,
+                                                  through_fields=('user_from', 'user_to'),
+                                                  related_name='followers',
+                                                  symmetrical=False))
