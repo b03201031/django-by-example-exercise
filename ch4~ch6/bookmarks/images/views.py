@@ -15,6 +15,8 @@ from .models import Image
 
 # Create your views here.
 
+
+
 @login_required
 def image_list(request):
     images = Image.objects.all()

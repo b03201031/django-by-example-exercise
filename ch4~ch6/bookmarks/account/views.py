@@ -1,13 +1,36 @@
-from django.shortcuts import render, HttpResponse
-from .forms import LoginForm, userRegistrationForm
-from .forms import UserEditForm, ProfileEditForm
-
-from .models import Profile
-
+from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
+
+
+from .forms import LoginForm, userRegistrationForm
+from .forms import UserEditForm, ProfileEditForm
+from .models import Profile
 # Create your views here.
+
+
+@login_required
+def user_list(request):
+    users = User.objects.filter(is_active=True)
+    TEMPLATE_PATH = 'account/users/list.html'
+    CONTEXT = {
+        'section': 'people',
+        'users': users,
+    }
+    return render(request, TEMPLATE_PATH, context=CONTEXT)
+
+@login_required
+def user_detail(request, username):
+    user = get_object_or_404(User, username=username, is_active=True)
+    TEMPLATE_PATH = 'account/users/detail.html'
+    CONTEXT = {
+        'section': 'people',
+        'user': user,
+    }
+    return render(request, TEMPLATE_PATH, context=CONTEXT)
+
 
 @login_required
 def edit(request):

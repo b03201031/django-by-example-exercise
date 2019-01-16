@@ -34,10 +34,27 @@
     <div id="header">
         <span class="logo">Bookmarks</span>
         {% if request.user.is_authenticated %}
-            <li>You have logged in</li>
-            {% if section == 'dashboard' %}
-                <li><a href="{% url 'account:dashboard' %}"> dashboard</a></li>    
-            {% endif %}
+            <ul class="menu">
+                <li {% if section == 'people' %} class="selected" {% endif %}>
+                    <a href="{% url 'account:user_list' %}">
+                        People
+                    </a>
+                </li>
+                
+                <li {% if section == 'dashboard' %} class="selected" {% endif %}>
+                    <a href="{% url 'account:dashboard' %}"> 
+                        Dashboard
+                    </a>
+                </li> 
+
+                 <li {% if section == 'images' %} class="selected" {% endif %}>
+                    <a href="{% url 'images:list' %}"> 
+                        Image
+                    </a>
+                </li>  
+            </ul>
+                 
+            
         {% else %}
             <li>You haven't logged in</li>
         {% endif %}
