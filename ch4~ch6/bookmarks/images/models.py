@@ -28,8 +28,7 @@ class Image(models.Model):
 
 
     def get_absolute_url(self):
-
-        return reverse('image:image_detail', args=[self.id, self.slug])
+        return reverse('images:image_detail', args=[self.id, self.slug])
 
 
 
