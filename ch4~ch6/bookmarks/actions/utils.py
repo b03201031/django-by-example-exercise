@@ -6,11 +6,11 @@ from .models import Action
 
 def create_action(user, verb, target=None):
     now = timezone.now()
-    last_minute = now - datetime.timedelta(second=60)
+    last_minute = now - datetime.timedelta(seconds=60)
     # time greater than last_minute
     similar_actions = Action.objects.filter(user_id=user.id,
-                                           verb=verb,
-                                           created__gte=last_minute)
+                                            verb=verb,
+                                            created__gte=last_minute)
 
 
     if target:

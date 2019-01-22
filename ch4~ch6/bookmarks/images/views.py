@@ -13,9 +13,16 @@ from common.decorators import ajax_required
 from .forms import ImageCreateForm
 from .models import Image
 
+import redis
+from django.conf import settings
 
 # Create your views here.
 
+
+
+REDIS_SERVER = redis.StrictRedis(host=settings.REDIS_HOST, 
+                                 port=settings.REDIS_PORT, 
+                                 db=settings.REDIS_DB)
 
 
 @login_required
@@ -69,7 +76,6 @@ def image_like(request):
                 create_action(request.user, 'like', image)
                 
             else:
-                print('called')
                 image.users_like.remove(request.user)
 
             DATA = {
@@ -89,17 +95,39 @@ def image_like(request):
     }
     return JsonResponse(DATA)
 
+@login_required
 def image_detail(request, id, slug):
     image = get_object_or_404(Image, id=id, slug=slug)
+
+    total_views = REDIS_SERVER.incr('image:{}:views'.format(image.id))
+    REDIS_SERVER.zincrby('image_ranking', 1, image.id)
 
     TEMPLATE_PATH = 'images/image/detail.html'
     CONTEXT = {
         'section': 'images',
         'image': image,
+        'total_views': total_views,
     }
 
     return render(request, TEMPLATE_PATH, context=CONTEXT)
 
+
+@login_required
+def image_ranking(request):
+    image_ranking = REDIS_SERVER.zrange('image_ranking', 0, -1, desc=True)[:10]
+    image_ranking_ids = [int(image_id) for image_id in image_ranking]
+
+    print(image_ranking_ids)
+    most_viewed = list(Image.objects.filter(id__in=image_ranking_ids))
+    most_viewed.sort(key=lambda x: image_ranking_ids.index(x.id))
+
+    TEMPLATE_PATH = 'images/image/ranking.html'
+    CONTEXT = {
+        'section': 'images',
+        'most_viewed': most_viewed,
+    }
+
+    return render(request, TEMPLATE_PATH, context=CONTEXT)
 
 @login_required
 def image_create(request):
@@ -125,3 +153,6 @@ def image_create(request):
     }
 
     return render(request, TEMPLATE_PATH, context=CONTEXT)
+
+
+

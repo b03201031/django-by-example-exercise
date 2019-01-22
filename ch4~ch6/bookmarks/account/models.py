@@ -16,9 +16,9 @@ class Profile(models.Model):
 
 class Contact(models.Model):
     user_from = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='rel_from_set',
-                                                           on_delete=models.CASCADE)
+                                                            on_delete=models.CASCADE)
     user_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='rel_to_set',
-                                                         on_delete=models.CASCADE)
+                                                          on_delete=models.CASCADE)
     created = models.DateField(auto_now_add=True, db_index=True)
 
     class Meta:
@@ -31,7 +31,7 @@ class Contact(models.Model):
 #monkey patch
 # 使用中间表格作为多对多关系的中间表时，一些管理器的内置方法如add()，create()，remove()等无法使用，必须编写直接操作中间表的代码。
 User.add_to_class('following',
-                   models.ManyToManyField('self', through=Contact,
-                                                  through_fields=('user_from', 'user_to'),
-                                                  related_name='followers',
-                                                  symmetrical=False))
+                  models.ManyToManyField('self', through=Contact,
+                                                 through_fields=('user_from', 'user_to'),
+                                                 related_name='followers',
+                                                 symmetrical=False))

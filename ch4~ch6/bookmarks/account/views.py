@@ -9,8 +9,12 @@ from django.contrib import messages
 from django.views.decorators.http import require_POST
 
 from common.decorators import ajax_required
-from actions.utils import create_action
 
+# actions
+from actions.utils import create_action
+from actions.models import Action
+
+# local
 from .forms import LoginForm, userRegistrationForm
 from .forms import UserEditForm, ProfileEditForm
 from .models import Profile, Contact
@@ -125,18 +129,35 @@ def register(request):
 
 @login_required
 def dashboard(request):
+    actions = Action.objects.exclude(user=request.user)
+    following_ids = request.user.following.values_list('id', flat=True)
+
+    if following_ids:
+        actions = actions.filter(user_id__in=following_ids)
+
+    # selected_related only in one to many relation
+    # use inner join
+    # use fk__fk of fk to inner join twice (on fk of fk)
+    # default use select to search fk
+
+    # prefetch use for many to many(one) relation
+    # search two table by restriction and join together(in python)
+    # filter exclude ... will clear prefetch query
+    actions = actions.select_related('user', 'user__profile')\
+                        .prefetch_related('target')[:10]
+
     TEMPLATE_PATH = 'account/dashboard.html'
-    context = {
-        'section': 'dashboard'
+    CONTEXT = {
+        'section': 'dashboard',
+        'actions': actions,
     }
-    return render(request, TEMPLATE_PATH, context=context)
+    return render(request, TEMPLATE_PATH, context=CONTEXT)
 
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
              
         if form.is_valid():
-            print('vallid')
             # return True
             # place form's data in cleaned_data
             cd = form.cleaned_data
@@ -154,7 +175,6 @@ def user_login(request):
             else:
                 return HttpResponse("Invalid login")
 
-        print('not')
     else:
         form = LoginForm()
 

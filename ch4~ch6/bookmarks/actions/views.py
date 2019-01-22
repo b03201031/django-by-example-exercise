@@ -15,3 +15,4 @@ def dashboard(request):
         'actions': actions,
     }
     return render(request, TEMPLATE_PATH, context=CONTEXT)
+    
