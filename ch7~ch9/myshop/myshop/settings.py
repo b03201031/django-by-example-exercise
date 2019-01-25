@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 from . import local_settings
+import braintree
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'shop',
     'cart',
     'orders',
+    'payment',
 
 ]
 
@@ -136,7 +138,7 @@ STATICFILES_DIRS = [
 
 # image
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mdeia/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # cart
 CART_SESSION_ID = 'cart'
@@ -147,3 +149,18 @@ EMAIL_HOST_USER = local_settings.EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = local_settings.EMAIL_HOST_PASSWORD
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+
+#celery
+CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
+
+
+
+BRAINTREE_CONF = braintree.Configuration(
+        braintree.Environment.Sandbox,
+        merchant_id=local_settings.BRAINTREE_MERCHANT_ID,
+        public_key=local_settings.BRAINTREE_PUBLIC_KEY,
+        private_key=local_settings.BRAINTREE_PRIVATE_KEY,
+    )
+
+

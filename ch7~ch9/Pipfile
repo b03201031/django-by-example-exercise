@@ -10,6 +10,7 @@ django = "*"
 pillow = "*"
 psycopg2 = "*"
 celery = "*"
+braintree = "*"
 
 [requires]
 python_version = "3.6"
